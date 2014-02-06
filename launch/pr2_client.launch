@@ -1,0 +1,28 @@
+<launch>
+  <arg name="rate" default="10.0" />
+
+  <include file="$(find image_shrink)/launch/client.launch">
+    <arg name="camera" value="/openni/rgb" />
+    <arg name="rate" value="$(arg rate)" />
+  </include>
+
+  <include file="$(find image_shrink)/launch/client.launch">
+    <arg name="camera" value="/narrow_stereo/left" />
+    <arg name="rate" value="$(arg rate)" />
+  </include>
+
+  <include file="$(find image_shrink)/launch/client.launch">
+    <arg name="camera" value="/wide_stereo/left" />
+    <arg name="rate" value="$(arg rate)" />
+  </include>
+
+  <include file="$(find image_shrink)/launch/client.launch">
+    <arg name="camera" value="/r_forearm_cam" />
+    <arg name="rate" value="$(arg rate)" />
+  </include>
+
+  <include file="$(find image_shrink)/launch/client.launch">
+    <arg name="camera" value="/l_forearm_cam" />
+    <arg name="rate" value="$(arg rate)" />
+  </include>
+</launch>
