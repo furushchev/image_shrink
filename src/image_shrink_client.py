@@ -5,6 +5,7 @@ import roslib; roslib.load_manifest('image_shrink')
 import rospy as r
 import cv2
 import numpy as np
+from scripy import sparse
 from tempfile import TemporaryFile
 from sensor_msgs.msg import Image
 from image_shrink.msg import StringArray
@@ -23,10 +24,16 @@ class ImageShrinkClient:
 
     def callback(self, sarray):
         tmp = TemporaryFile()
-        tmp.writelines(sarray.data)
+        tmp.writelines(sarray.data[1:])
         tmp.seek(0)
         data = np.load(tmp)
-        img = data['img']
+        img_raw = data['img']
+        if sarray.data[0] == "a":
+            # sparse matrix
+            img = img_raw.toarray()
+        elif sarray.data[0] == "n":
+            # normal matrix
+            img = img_raw
         img.shape = (img.shape[0], img.shape[1], 1)
         imgmsg = self.bridge.cv2_to_imgmsg(img)
         imgmsg.encoding = 'mono8'
