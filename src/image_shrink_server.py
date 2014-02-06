@@ -13,10 +13,11 @@ from cv_bridge import CvBridge, CvBridgeError
 class ImageShrinkServer:
     def __init__(self):
         r.init_node('image_shrink_server')
-        self.pub = r.Publisher('~image_shrinked', StringArray)
+        self.pub = r.Publisher('image_shrinked', StringArray)
         self.bridge = CvBridge()
-        self.sub = r.Subscriber('~raw_image', Image, self.callback)
+        self.sub = r.Subscriber('raw_image', Image, self.callback)
         self.rate = r.get_param('~rate')
+        self.scale = r.get_param('~scale')
 
     def run(self):
 
@@ -30,13 +31,16 @@ class ImageShrinkServer:
             print e
 
         edge = cv2.Canny(ci, 100, 200)
+        h = ci.shape[0]
+        w = ci.shape[1]
+        edge_resized = cv2.resize(edge, (int(h * self.scale), int(w * self.scale)))
         tmp = TemporaryFile()
-        np.savez_compressed(tmp, img=edge)
+        np.savez_compressed(tmp, img=edge_resized)
         tmp.seek(0)
         pubData = StringArray()
         pubData.data = tmp.readlines()
         self.pub.publish(pubData)
-        r.sleep()
+        r.sleep(1. / self.rate)
 
 def init():
     shrink_server = ImageShrinkServer()

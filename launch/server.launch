@@ -12,13 +12,14 @@
     <remap from="raw_image" to="$(arg image)" />
     <remap from="image_shrinked" to="$(arg shrinked)" />
     <param name="rate" value="$(arg rate)" />
+    <param name="scale" value="$(arg scale)" />
   </node>
-  <node pkg="resized_image_transport" type="image_resizer" name="image_resizer"
-        output="screen" >
-    <remap from="camera" to="$(arg camera)" />
-    <remap from="image" to="/$(arg shrinked)" />
-    <param name="resize_scale_x" value="$(arg scale)" />
-    <param name="resize_scale_y" value="$(arg scale)" />
-  </node>
+  <!-- <node pkg="resized_image_transport" type="image_resizer" name="image_resizer" -->
+  <!--       output="screen" > -->
+  <!--   <remap from="camera" to="$(arg camera)" /> -->
+  <!--   <remap from="image" to="/$(arg shrinked)" /> -->
+  <!--   <param name="resize_scale_x" value="$(arg scale)" /> -->
+  <!--   <param name="resize_scale_y" value="$(arg scale)" /> -->
+  <!-- </node> -->
   </group>
 </launch>
