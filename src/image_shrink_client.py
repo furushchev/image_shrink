@@ -12,12 +12,12 @@ from cv_bridge import CvBridge, CvBridgeError
 
 class ImageShrinkClient:
     def __init__(self):
-        self.pub = r.Publisher('image_edge', Image)
-        self.sub = r.Subscriber('image_edge_shrinked', StringArray, self.callback)
+        r.init_node('image_shrink_client')
+        self.pub = r.Publisher('out_image', Image)
+        self.sub = r.Subscriber('image_shrinked', StringArray, self.callback)
         self.bridge = CvBridge()
 
     def run(self):
-        r.init_node('image_shrink_client')
         r.Rate(r.get_param('~rate'))
         r.spin()
 
