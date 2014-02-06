@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import roslib; roslib.load_manifest('image_shrink_server')
+import roslib; roslib.load_manifest('image_shrink')
 import rospy as r
 import cv2
 import numpy as np
