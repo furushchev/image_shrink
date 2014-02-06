@@ -14,7 +14,9 @@ from cv_bridge import CvBridge, CvBridgeError
 class ImageShrinkServer:
     def __init__(self):
         r.init_node('image_shrink_server')
-        self.pub = r.Publisher('image_shrinked', StringArray)
+        
+        self.zippub = r.Publisher('image_shrinked', StringArray)
+        self.imgpub = r.Publisher('image_edge', Image)
         self.bridge = CvBridge()
         self.sub = r.Subscriber('raw_image', Image, self.callback)
         self.rate = r.get_param('~rate')
@@ -35,11 +37,12 @@ class ImageShrinkServer:
         w = ci.shape[1]
 
         edge_resized = cv2.resize(edge, (int(w * self.scale), int(h * self.scale)))
+        self.imgpub.publish(self.bridge.cv2_to_imgmsg(edge_resized))
         tmp = TemporaryFile()
         np.savez_compressed(tmp, img=edge_resized)
         tmp.seek(0)
-        pubData = StringArray(data=tmp.readlines())
-        self.pub.publish(pubData)
+        strPubData = StringArray(data=tmp.readlines())
+        self.zippub.publish(strPubData)
         r.sleep(1. / self.rate)
 
 def init():
