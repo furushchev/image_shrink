@@ -33,7 +33,7 @@ class ImageShrinkServer:
         edge = cv2.Canny(ci, 100, 200)
         h = ci.shape[0]
         w = ci.shape[1]
-        edge_resized = cv2.resize(edge, (int(h * self.scale), int(w * self.scale)))
+        edge_resized = cv2.resize(edge, (int(w * self.scale), int(h * self.scale)))
         tmp = TemporaryFile()
         np.savez_compressed(tmp, img=edge_resized)
         tmp.seek(0)
