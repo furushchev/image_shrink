@@ -1,0 +1,16 @@
+<package>
+  <description brief="image_shrink_server">
+
+     image_shrink_server
+
+  </description>
+  <author>furushchev</author>
+  <license>BSD</license>
+  <review status="unreviewed" notes=""/>
+  <url>http://ros.org/wiki/image_shrink_server</url>
+  <depend package="sensor_msgs"/>
+  <depend package="rospy"/>
+
+</package>
+
+
