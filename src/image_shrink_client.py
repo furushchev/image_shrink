@@ -14,10 +14,11 @@ class ImageShrinkClient:
     def __init__(self):
         self.pub = r.Publisher('image_edge', Image)
         self.sub = r.Subscriber('image_edge_shrinked', StringArray, self.callback)
+        self.bridge = CvBridge()
 
     def run(self):
         r.init_node('image_shrink_client')
-        r.rate(10.0)
+        r.Rate(10.0)
         r.spin()
 
     def callback(self, sarray):
@@ -26,7 +27,11 @@ class ImageShrinkClient:
         tmp.seek(0)
         data = np.load(tmp)
         img = data['img']
-        imgmsg = cv2_to_imgmsg(img)
+        img.shape = (img.shape[0], img.shape[1], 1)
+        # for i in range(10):
+        #     print img[i]
+        imgmsg = self.bridge.cv2_to_imgmsg(img)
+        imgmsg.encoding = 'mono8'
         self.pub.publish(imgmsg)
 
 def init():
@@ -34,7 +39,4 @@ def init():
     shrink_client.run()
 
 if __name__ == '__main__':
-    try:
-        init()
-    except r.ROSInterruptExeption:
-        pass
+    init()

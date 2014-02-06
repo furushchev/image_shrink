@@ -15,11 +15,11 @@ class ImageShrinkServer:
 
         self.pub = r.Publisher('image_edge_shrinked', StringArray)
         self.bridge = CvBridge()
-        self.sub = r.Subscriber('image_rect', Image, self.callback)
+        self.sub = r.Subscriber('/openni/rgb/image_rect', Image, self.callback)
 
     def run(self):
         r.init_node('image_shrink_server')
-        r.rate(10.0)
+        r.Rate(10.0)
         r.spin()
 
     def callback(self, img):
@@ -34,14 +34,12 @@ class ImageShrinkServer:
         tmp.seek(0)
         pubData = StringArray()
         pubData.data = tmp.readlines()
-        pub.publish(pubData)
+        self.pub.publish(pubData)
 
 def init():
     shrink_server = ImageShrinkServer()
     shrink_server.run()
 
 if __name__ == '__main__':
-    try:
-        init()
-    except r.ROSInterruptExeption:
-        pass
+    init()
+
