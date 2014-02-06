@@ -7,7 +7,7 @@ import cv2
 import numpy as np
 from tempfile import TemporaryFile
 from sensor_msgs.msg import Image
-from image_shrink_server.msg import StringArray
+from image_shrink.msg import StringArray
 from cv_bridge import CvBridge, CvBridgeError
 
 class ImageShrinkClient:
