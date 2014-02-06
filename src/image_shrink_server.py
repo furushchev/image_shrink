@@ -19,10 +19,8 @@ class ImageShrinkServer:
         self.sub = r.Subscriber('raw_image', Image, self.callback)
         self.rate = r.get_param('~rate')
         self.scale = r.get_param('~scale')
-        self.sparse = r.get_param('~sparse')
 
     def run(self):
-
         r.Rate(self.rate)
         r.spin()
 
@@ -38,15 +36,9 @@ class ImageShrinkServer:
 
         edge_resized = cv2.resize(edge, (int(w * self.scale), int(h * self.scale)))
         tmp = TemporaryFile()
-        np.savez_compressed(tmp, img=img_mat)
+        np.savez_compressed(tmp, img=edge_resized)
         tmp.seek(0)
-
-        if self.sparse:
-            sendData = ["s"].extend(tmp.readlines())
-        else:
-            sendData = ["n"].extend(tmp.readlines())
-
-        pubData = StringArray(data=sendData)
+        pubData = StringArray(data=tmp.readlines())
         self.pub.publish(pubData)
         r.sleep(1. / self.rate)
 
