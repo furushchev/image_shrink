@@ -1,7 +1,8 @@
 <launch>
   <arg name="camera" default="/openni/rgb" />
   <arg name="image" default="image_rect" />
-  <arg name="scale" default="0.25" />
+  <arg name="shrinked" default="image_shrinked" />
+  <arg name="scale" default="0.5" />
   <arg name="rate" default="1.0" />
 
   <group ns="$(arg camera)">
@@ -9,13 +10,13 @@
         name="image_shrink_server"
         output="screen">
     <remap from="raw_image" to="$(arg image)" />
-    <!--<remap from="image_shrinked" to="image_zip" />-->
+    <remap from="image_shrinked" to="$(arg shrinked)" />
     <param name="rate" value="$(arg rate)" />
   </node>
   <node pkg="resized_image_transport" type="image_resizer" name="image_resizer"
         output="screen" >
-    <remap from="camera" to="/" />
-    <remap from="image" to="/$(arg image)" />
+    <remap from="camera" to="$(arg camera)" />
+    <remap from="image" to="/$(arg shrinked)" />
     <param name="resize_scale_x" value="$(arg scale)" />
     <param name="resize_scale_y" value="$(arg scale)" />
   </node>
