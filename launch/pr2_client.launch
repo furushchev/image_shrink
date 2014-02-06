@@ -1,5 +1,5 @@
 <launch>
-  <arg name="rate" default="10.0" />
+  <arg name="rate" default="4.0" />
 
   <include file="$(find image_shrink)/launch/client.launch">
     <arg name="camera" value="/openni/rgb" />
