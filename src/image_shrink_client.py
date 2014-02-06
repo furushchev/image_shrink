@@ -18,7 +18,7 @@ class ImageShrinkClient:
 
     def run(self):
         r.init_node('image_shrink_client')
-        r.Rate(10.0)
+        r.Rate(r.get_param('~rate'))
         r.spin()
 
     def callback(self, sarray):
@@ -28,8 +28,6 @@ class ImageShrinkClient:
         data = np.load(tmp)
         img = data['img']
         img.shape = (img.shape[0], img.shape[1], 1)
-        # for i in range(10):
-        #     print img[i]
         imgmsg = self.bridge.cv2_to_imgmsg(img)
         imgmsg.encoding = 'mono8'
         self.pub.publish(imgmsg)

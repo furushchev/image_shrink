@@ -12,14 +12,15 @@ from cv_bridge import CvBridge, CvBridgeError
 
 class ImageShrinkServer:
     def __init__(self):
-
-        self.pub = r.Publisher('image_edge_shrinked', StringArray)
+        r.init_node('image_shrink_server')
+        self.pub = r.Publisher('~image_shrinked', StringArray)
         self.bridge = CvBridge()
-        self.sub = r.Subscriber('/openni/rgb/image_rect', Image, self.callback)
+        self.sub = r.Subscriber('~raw_image', Image, self.callback)
+        self.rate = r.get_param('~rate')
 
     def run(self):
-        r.init_node('image_shrink_server')
-        r.Rate(10.0)
+
+        r.Rate(self.rate)
         r.spin()
 
     def callback(self, img):
@@ -35,6 +36,7 @@ class ImageShrinkServer:
         pubData = StringArray()
         pubData.data = tmp.readlines()
         self.pub.publish(pubData)
+        r.sleep()
 
 def init():
     shrink_server = ImageShrinkServer()
@@ -42,4 +44,3 @@ def init():
 
 if __name__ == '__main__':
     init()
-

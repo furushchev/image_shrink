@@ -1,0 +1,19 @@
+<launch>
+  <arg name="camera" default="/openni/rgb" />
+  <arg name="image" default="image_edged" />
+  <arg name="rate" default="1.0" />
+
+  <group ns="$(arg camera)">
+  <node pkg="image_shrink" type="image_shrink_client.py"
+        name="image_shrink_client"
+        output="screen">
+    <!--<remap from="image_shrinked" to="hoge" />-->
+    <remap from="out_image" to="$(arg image)" />
+    <param name="rate" value="$(arg rate)" />
+  </node>
+  <node pkg="image_view" type="image_view"
+        name="image_view" output="screen">
+    <remap from="image" to="$(arg camera)/$(arg image)"/>
+  </node>
+  </group>
+</launch>
