@@ -1,5 +1,8 @@
 <launch>
   <arg name="rate" default="4.0" />
+  <arg name="scale" default="0.4" />
+  <arg name="canny_threshold1" default="100.0" />
+  <arg name="canny_threshold2" default="200.0" />
 
   <include file="$(find image_shrink)/launch/client.launch">
     <arg name="camera" value="/openni/rgb" />
