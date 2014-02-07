@@ -21,10 +21,27 @@ class ImageShrinkClient:
         r.Rate(r.get_param('~rate'))
         r.spin()
 
+    def decompressMessage(self, src):
+        height = int(src[0])
+        width = int(src[1])
+        tmp = TemporaryFile()
+        tmp.writelines(src[2:])
+        tmp.seek(0)
+        npz = np.load(tmp)
+        body = npz['img']
+        ret = np.ndarray((height, width), dtype=np.uint8)
+        for i in range(height*width):
+            if body[i]:
+                ret[i/width][i%width] = 255
+
+
     def callback(self, sarray):
+        height = sarray[0]
+        width = sarray[1]
         tmp = TemporaryFile()
         tmp.writelines(sarray.data)
         tmp.seek(0)
+
         data = np.load(tmp)
         img = data['img']
         img.shape = (img.shape[0], img.shape[1], 1)
