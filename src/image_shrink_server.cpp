@@ -17,6 +17,7 @@ class ImageShrinkServer {
     ros::Publisher _pub_raw, _pub_bin;
     ros::Subscriber _sub;
     cv_bridge::CvImagePtr _resized_img_ptr;
+    image_shrink::BinaryImagePtr _bin_img_ptr;
     double _rate, _imageScale;
     double _canny_threshold1, _canny_threshold2;
     bool _isFirstCallback, _isInitialized;
@@ -24,7 +25,7 @@ class ImageShrinkServer {
 public:
     ImageShrinkServer() : _ln(ros::NodeHandle("~")), _isFirstCallback(false), _isInitialized(false) {
         _pub_bin = _n.advertise<image_shrink::BinaryImage>("image_binary", 10);
-        _pub_raw = _n.advertise<sensor_msgs::Image>("image_debug", 10);
+        _pub_raw = _n.advertise<sensor_msgs::Image>("image_edge_raw", 10);
 
     }
     virtual ~ImageShrinkServer(){};
@@ -45,6 +46,7 @@ public:
 
         if(!_isFirstCallback){
             _resized_img_ptr = boost::make_shared<cv_bridge::CvImage>();
+            _bin_img_ptr = boost::make_shared<image_shrink::BinaryImage>();
             _resized_img_ptr->encoding = "mono8";
             _isFirstCallback = true;
         }
@@ -54,9 +56,25 @@ public:
         cv::blur(_resized_img_ptr->image, _resized_img_ptr->image, cv::Size(3,3));
         cv::Canny(_resized_img_ptr->image, _resized_img_ptr->image, _canny_threshold1, _canny_threshold2);
         _pub_raw.publish(_resized_img_ptr->toImageMsg());
+
+        // compress
+        _bin_img_ptr->width = _resized_img_ptr->image.cols;
+        _bin_img_ptr->height = _resized_img_ptr->image.rows;
+        _bin_img_ptr->data.resize(_bin_img_ptr->width * _bin_img_ptr->height / 8 + 1);
+        for (int y = 0; y < _resized_img_ptr->image.rows; ++y){
+            for (int x = 0; x < _resized_img_ptr->image.cols; ++x){
+                if (_resized_img_ptr->image.at<uchar>(y,x) > 0) {
+                    int i = y * _resized_img_ptr->image.cols + x;
+                    _bin_img_ptr->data[i/8] |= (1 << (i%8));
+                }
+            }
+        }
+        _pub_bin.publish(*_bin_img_ptr);
+
+        // sleep
         ros::Rate pubRate(_rate);
         pubRate.sleep();
-    }
+    } // end of callback function
 
     void initialize(){
         _ln.param("scale", _imageScale, 0.4);

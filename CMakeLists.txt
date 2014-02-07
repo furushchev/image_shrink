@@ -22,6 +22,7 @@ rosbuild_genmsg()
 #rosbuild_gensrv()
 
 rosbuild_add_executable(image_shrink_server src/image_shrink_server.cpp)
+rosbuild_add_executable(image_shrink_client src/image_shrink_client.cpp)
 
 #common commands for building c++ executables and libraries
 #rosbuild_add_library(${PROJECT_NAME} src/example.cpp)

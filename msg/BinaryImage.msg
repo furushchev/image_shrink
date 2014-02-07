@@ -1,3 +1,3 @@
-int16 width
-int16 height
+uint32 width
+uint32 height
 uint8[] data
