@@ -14,7 +14,7 @@ namespace enc = sensor_msgs::image_encodings;
 class ImageShrinkServer {
     ros::NodeHandle _n;
     ros::NodeHandle _ln;
-    ros::Publisher _pub;
+    ros::Publisher _pub_raw, _pub_bin;
     ros::Subscriber _sub;
     cv_bridge::CvImagePtr _resized_img_ptr;
     double _rate, _imageScale;
@@ -23,8 +23,9 @@ class ImageShrinkServer {
 
 public:
     ImageShrinkServer() : _ln(ros::NodeHandle("~")), _isFirstCallback(false), _isInitialized(false) {
-//        _pub = _n.advertise<image_shrink::BinaryImage>("image_binary", 10);
-        _pub = _n.advertise<sensor_msgs::Image>("image_debug", 10);
+        _pub_bin = _n.advertise<image_shrink::BinaryImage>("image_binary", 10);
+        _pub_raw = _n.advertise<sensor_msgs::Image>("image_debug", 10);
+
     }
     virtual ~ImageShrinkServer(){};
 
@@ -52,7 +53,9 @@ public:
         cv::resize(cv_ptr->image, _resized_img_ptr->image, dsize);
         cv::blur(_resized_img_ptr->image, _resized_img_ptr->image, cv::Size(3,3));
         cv::Canny(_resized_img_ptr->image, _resized_img_ptr->image, _canny_threshold1, _canny_threshold2);
-        _pub.publish(_resized_img_ptr->toImageMsg());
+        _pub_raw.publish(_resized_img_ptr->toImageMsg());
+        ros::Rate pubRate(_rate);
+        pubRate.sleep();
     }
 
     void initialize(){
@@ -60,11 +63,11 @@ public:
         _ln.param("rate", _rate, 3.0);
         _ln.param("canny_threshold1", _canny_threshold1, 100.0);
         _ln.param("canny_threshold2", _canny_threshold2, 200.0);
-        ROS_INFO("initialized scale: %lf, rate: %lf, threshold1: %lf, threshold2: %lf", _imageScale, _rate, _canny_threshold1, _canny_threshold2);
+        ROS_INFO("initialized scale: %.1lf, rate: %.1lf, threshold1: %.1lf, threshold2: %.1lf", _imageScale, _rate, _canny_threshold1, _canny_threshold2);
     }
-\
+
     void checkSubscribers(){
-        if(_pub.getNumSubscribers() == 0) {
+        if(_pub_raw.getNumSubscribers() == 0) {
             if(_sub) {
                 _sub.shutdown();
                 ROS_INFO("unsubscribe");
@@ -77,8 +80,9 @@ public:
         }
     }
 
-
-
+    double rate(){
+        return this->_rate;
+    }
 }; // end of ImageShrinkServer class definition
 
 
