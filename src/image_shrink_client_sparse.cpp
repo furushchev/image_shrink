@@ -42,15 +42,15 @@ public:
         _img_ptr->step = msg->width;
         _img_ptr->data.resize(_img_ptr->height * _img_ptr->width);
 
-        for (int x = 0; x < msg->width; ++x){
-            for (int y = 0; y < msg->height; ++y){
-                _img_ptr->data[y * msg->width + x] = 0;
+        for (int x = 0; x < _img_ptr->width; ++x){
+            for (int y = 0; y < _img_ptr->height; ++y){
+                _img_ptr->data[y * _img_ptr->width + x] = 0;
             }
         }
 
         for (int i = 0; i < msg->data.size(); ++i){
             uint16_t pos = msg->data[i];
-            uint8_t x = (uint8_t)(pos & 65280);
+            uint8_t x = (uint8_t)pos;
             uint8_t y = (uint8_t)(pos >> 8);
             _img_ptr->data[y * _img_ptr->width + x] = 255;
         }
