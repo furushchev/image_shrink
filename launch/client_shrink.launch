@@ -1,5 +1,5 @@
 <launch>
-  <arg name="camera" default="/openni/rgb" />
+  <arg name="camera" default="/wide_stereo/left" />
   <arg name="binary_image" default="image_binary_sparse" />
   <arg name="pub_image" default="image_edged" />
 
