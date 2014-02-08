@@ -1,0 +1,18 @@
+<launch>
+  <arg name="camera" default="/openni/rgb" />
+  <arg name="binary_image" default="image_binary_sparse" />
+  <arg name="pub_image" default="image_edged" />
+
+  <group ns="$(arg camera)">
+  <node pkg="image_shrink" type="image_shrink_client_sparse"
+        name="image_shrink_client_sparse"
+        output="screen">
+    <remap from="image_edged" to="$(arg pub_image)" />
+    <remap from="image_binary" to="$(arg binary_image)" />
+  </node>
+  <node pkg="image_view" type="image_view"
+        name="image_view" output="screen">
+    <remap from="image" to="$(arg camera)/$(arg pub_image)"/>
+  </node>
+  </group>
+</launch>

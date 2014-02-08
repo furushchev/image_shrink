@@ -1,0 +1,22 @@
+<launch>
+  <node pkg="image_view" type="image_view" name="image_view1"
+        output="screen">
+    <remap from="image" to="/openni/rgb/image_edge" />
+  </node>
+  <node pkg="image_view" type="image_view" name="image_view2"
+        output="screen">
+    <remap from="image" to="/l_forearm_cam/image_edge" />
+  </node>
+  <node pkg="image_view" type="image_view" name="image_view3"
+        output="screen">
+    <remap from="image" to="/narrow_stereo/left/image_edge" />
+  </node>
+  <node pkg="image_view" type="image_view" name="image_view4"
+        output="screen">
+    <remap from="image" to="/r_forearm_cam/image_edge" />
+  </node>
+  <node pkg="image_view" type="image_view" name="image_view5"
+        output="screen">
+    <remap from="image" to="/wide_stereo/left/image_edge" />
+  </node>
+</launch>

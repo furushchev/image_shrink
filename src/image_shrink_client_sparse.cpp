@@ -1,3 +1,4 @@
+#include <stdint.h>
 #include <boost/shared_ptr.hpp>
 #include <vector>
 #include <iostream>
@@ -7,7 +8,6 @@
 #include <ros/ros.h>
 #include <sensor_msgs/Image.h>
 #include <sensor_msgs/image_encodings.h>
-#include <image_shrink/BinaryImage.h>
 #include <image_shrink/SparseBinaryImage.h>
 
 namespace enc = sensor_msgs::image_encodings;
@@ -23,7 +23,7 @@ class ImageShrinkClient {
 public:
     ImageShrinkClient() : _ln(ros::NodeHandle("~")), _isInitialized(false) {
         _pub = _n.advertise<sensor_msgs::Image>("image_edged", 10);
-        _sub = _n.subscribe<image_shrink::BinaryImage>("image_binary", 1, &ImageShrinkClient::binaryCallback, this);
+        _sub = _n.subscribe<image_shrink::SparseBinaryImage>("image_binary_sparse", 1, &ImageShrinkClient::binaryCallback, this);
     }
     virtual ~ImageShrinkClient(){};
 
@@ -31,7 +31,7 @@ public:
         _img_ptr = boost::make_shared<sensor_msgs::Image>();
     }
 
-    void binaryCallback(const image_shrink::BinaryImageConstPtr& msg){
+    void binaryCallback(const image_shrink::SparseBinaryImageConstPtr& msg){
         if (!_isInitialized){
             initialize();
             _isInitialized = true;
@@ -41,15 +41,11 @@ public:
         _img_ptr->encoding = "mono8";
         _img_ptr->step = msg->width;
         _img_ptr->data.resize(_img_ptr->height * _img_ptr->width);
-        for (int y = 0; y < (int)_img_ptr->height; ++y){
-            for (int x = 0; x < (int)_img_ptr->width; ++x){
-                int i = y * _img_ptr->width + x;
-                if (((msg->data[i/8] >> (i%8)) & 1) == 1){
-                    _img_ptr->data[i] = 255;
-                } else {
-                    _img_ptr->data[i] = 0;
-                }
-            }
+        for (int i = 0; i < msg->data.size(); ++i){
+            uint16_t pos = msg->data[i];
+            uint8_t x = (uint8_t)(pos & 65280);
+            uint8_t y = (uint8_t)(pos >> 4);
+            _img_ptr->data[y * _img_ptr->width + x] = 255;
         }
         _pub.publish(_img_ptr);
     } // end of callback

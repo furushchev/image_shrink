@@ -1,0 +1,29 @@
+<launch>
+  <arg name="camera" default="/openni/rgb" />
+  <arg name="image_in" default="image_rect" />
+  <!-- <arg name="shrinked" default="image_shrinked" /> -->
+  <arg name="scale" default="0.5" />
+  <arg name="rate" default="1" />
+  <arg name="canny_threshold1" default="100.0" />
+  <arg name="canny_threshold2" default="200.0" />
+
+  <group ns="$(arg camera)">
+  <node pkg="image_shrink" type="image_shrink_server_sparse"
+        name="image_shrink_server_sparse"
+        output="screen">
+    <remap from="image_in" to="$(arg image_in)" />
+    <!-- <remap from="image_shrinked" to="$(arg shrinked)" /> -->
+    <param name="rate" value="$(arg rate)" />
+    <param name="scale" value="$(arg scale)" />
+    <param name="canny_threshold1" value="$(arg canny_threshold1)"/>
+    <param name="canny_threshold2" value="$(arg canny_threshold2)"/>
+  </node>
+  <!-- <node pkg="resized_image_transport" type="image_resizer" name="image_resizer" -->
+  <!--       output="screen" > -->
+  <!--   <remap from="camera" to="$(arg camera)" /> -->
+  <!--   <remap from="image" to="/$(arg shrinked)" /> -->
+  <!--   <param name="resize_scale_x" value="$(arg scale)" /> -->
+  <!--   <param name="resize_scale_y" value="$(arg scale)" /> -->
+  <!-- </node> -->
+  </group>
+</launch>
