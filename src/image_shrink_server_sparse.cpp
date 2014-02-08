@@ -83,7 +83,7 @@ public:
         for (uint8_t y = 0; y < _spr_img_ptr->height; ++y){
             for (uint8_t x = 0; x < _spr_img_ptr->width; ++x){
                 if (_resized_img_ptr->image.at<uchar>(y,x) > 0) {
-                    uint16_t i = (y << 4) | x;
+                    uint16_t i = (y << 8) | x;
                     _spr_img_ptr->data.push_back(i);
                 }
             }

@@ -44,7 +44,7 @@ public:
         for (int i = 0; i < msg->data.size(); ++i){
             uint16_t pos = msg->data[i];
             uint8_t x = (uint8_t)(pos & 65280);
-            uint8_t y = (uint8_t)(pos >> 4);
+            uint8_t y = (uint8_t)(pos >> 8);
             _img_ptr->data[y * _img_ptr->width + x] = 255;
         }
         _pub.publish(_img_ptr);
