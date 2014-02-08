@@ -41,9 +41,10 @@ public:
         _img_ptr->encoding = "mono8";
         _img_ptr->step = msg->width;
         _img_ptr->data.resize(_img_ptr->height * _img_ptr->width);
+
         for (int x = 0; x < msg->width; ++x){
             for (int y = 0; y < msg->height; ++y){
-                _img_ptr->data[y * msg->width * x] = 0;
+                _img_ptr->data[y * msg->width + x] = 0;
             }
         }
 
